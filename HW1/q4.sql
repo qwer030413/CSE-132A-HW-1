@@ -1,3 +1,4 @@
+-- Active: 1775945047750@@127.0.0.1@3306
 SELECT DISTINCT b1.cname AS name1
 , b2.cname AS name2
 FROM borrower b1
