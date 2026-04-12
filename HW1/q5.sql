@@ -2,7 +2,7 @@
 -- FROM loan l1
 -- JOIN loan l2 
 -- on l1.no = l2.no
-SELECT lno as loanNO
+SELECT lno as loanNo
 FROM borrower
 group by lno HAVING COUNT(DISTINCT cname) >= 2;
 
