@@ -1,0 +1,1 @@
+SELECT MAX(s.discount) FROM Sales s
