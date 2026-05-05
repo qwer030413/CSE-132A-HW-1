@@ -84,4 +84,10 @@ WHERE NOT EXISTS(
 
 -- EXISTS (CORRELATED)
 -- Find students who share at least one course with student 'Alice'
-SELECT s.name FROM student s
+SELECT DISTINCT s2.name
+FROM Student s1, Student s2, Enroll e1, Enroll e2
+WHERE s1.sid = e1.sid
+  AND s2.sid = e2.sid
+  AND e1.cid = e2.cid
+  AND s1.name = 'Alice'
+  AND s2.sid <> s1.sid;
