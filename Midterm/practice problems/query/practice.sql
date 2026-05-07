@@ -1,3 +1,4 @@
+-- Active: 1778100485031@@127.0.0.1@3306
 -- Student(sid INT, name TEXT, major TEXT, gpa FLOAT)
 
 -- Course(cid INT, title TEXT, dept TEXT)
@@ -91,3 +92,107 @@ WHERE s1.sid = e1.sid
   AND e1.cid = e2.cid
   AND s1.name = 'Alice'
   AND s2.sid <> s1.sid;
+
+SELECT DISTINCT s2.name
+FROM Student s1, Student s2, Enroll e1, Enroll e2
+WHERE s1.sid = e1.sid
+AND s1.name = 'Alice'
+AND s2.sid = e2.sid
+AND e2.cid = e1.cid
+AND s2.sid <> s1.sid;
+
+
+-- ALL
+-- Find students whose GPA is higher than ALL students in 'CS' major
+SELECT name
+FROM Student
+WHERE gpa > ALL (
+  SELECT gpa
+  FROM Student
+  WHERE major = 'CS'
+);
+
+
+
+-- Student(sid INT, name TEXT, major TEXT, gpa FLOAT)
+
+-- Course(cid INT, title TEXT, dept TEXT)
+
+-- Enroll(sid INT, cid INT, grade TEXT)
+
+-- Professor(pid INT, name TEXT, dept TEXT)
+
+-- Teaches(pid INT, cid INT)
+
+-- Find students whose name starts with 'A'
+
+--JOIN + GROUP + HAVING
+-- Find courses that have more than 3 students enrolled
+SELECT c.cid FROM Course c
+JOIN Enroll e ON e.cid = c.cid
+GROUP BY c.cid HAVING COUNT(e.sid) > 3
+
+
+-- NESTED IN + JOIN
+-- Find names of professors who teach courses that student 'Alice' is enrolled in
+WITH temp AS(
+    SELECT c.cid FROM Course c
+    JOIN Enroll e ON e.cid = c.cid
+    JOIN Student s ON s.sid = e.sid
+    WHERE s.name = 'Alice'
+)
+SELECT p.name FROM Professor p
+JOIN Teaches t ON t.pid = p.pid
+WHERE t.cid IN (SELECT cid FROM temp)
+
+-- OR
+SELECT DISTINCT p.name
+FROM Professor p, Teaches t, Course c, Enroll e, Student s
+WHERE p.pid = t.pid
+  AND t.cid = c.cid
+  AND c.cid = e.cid
+  AND e.sid = s.sid
+  AND s.name = 'Alice';
+
+
+-- DOUBLE NOT EXISTS
+-- Find students who take every course that 'Alice' takes
+-- Find students such that there is no course Alice takes that this student does not take.
+SELECT s.name
+FROM Student s
+WHERE NOT EXISTS (
+  SELECT e1.cid
+  FROM Student a, Enroll e1
+  WHERE a.sid = e1.sid
+    AND a.name = 'Alice'
+    AND NOT EXISTS (
+      SELECT *
+      FROM Enroll e2
+      WHERE e2.sid = s.sid
+        AND e2.cid = e1.cid
+    )
+);
+
+-- COUNT vs DISTINCT
+-- Find courses where the number of distinct students is greater than 5
+SELECT c.cid, c.title, COUNT(DISTINCT e.sid) FROM Enroll e
+JOIN Course c ON c.cid = e.cid
+GROUP BY c.cid, c.title HAVING COUNT(DiSTINCT e.sid) > 5
+
+
+-- Students whose GPA is NULL
+-- never write gpa = Null;
+SELECT name
+FROM Student
+WHERE gpa IS NULL;
+
+-- Students enrolled in at least 2 courses
+SELECT s.name FROM Student s
+JOIN Enroll e ON e.sid = s.sid
+JOIN Course c ON c.cid = e.cid
+GROUP BY s.sid, s.name
+HAVING COUNT(c.cid) >= 2
+
+
+
+
