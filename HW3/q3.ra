@@ -1,0 +1,31 @@
+temp :-
+\project_{name}
+(
+    customer
+    \join_{name = cname}
+    (
+        borrower
+        \join_{lno = no}
+        \select_{type = 'jumbo mortgage'} loan
+    )
+);
+
+studentCustomer :-
+\project_{name}
+(
+    customer
+    \join_{name = cname}
+    (
+        borrower
+        \join_{lno = no}
+        \select_{type = 'student'} loan
+    )
+);
+
+temp
+\diff
+(
+    temp
+    \diff
+    studentCustomer
+);

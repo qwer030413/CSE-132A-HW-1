@@ -1,0 +1,12 @@
+\rename_{loanNo}
+\project_{lno}
+(
+    \select_{cnt >= 2}
+    (
+        \rename_{lno, cnt}
+        \aggr_{lno : count(cname)}
+        (
+            \project_{lno, cname} borrower
+        )
+    )
+);

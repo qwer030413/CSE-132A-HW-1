@@ -1,0 +1,9 @@
+\project_{name}(
+    \select_{totalAmount >= 13000}(
+        \rename_{name, totalAmount}
+        \aggr_{customer.name : sum(amount)}(
+            (customer \join_{customer.name = borrower.cname} borrower)
+            \join_{borrower.lno = loan.no} loan
+        )
+    )
+);

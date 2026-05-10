@@ -1,0 +1,22 @@
+temp :-
+\project_{no, minCredit}
+(
+    \select_{name = 'John Smith'}
+    (
+        (loan \join_{no = lno} borrower)
+        \join_{cname = name} customer
+    )
+);
+notMaxJohnLoans :-
+\project_{no}
+(
+    \select_{minCredit < minCredit2}
+    (
+        temp \cross \rename_{no2, minCredit2} temp
+    )
+);
+\rename_{loanNo}
+(
+    \project_{no} temp \diff
+    notMaxJohnLoans
+);

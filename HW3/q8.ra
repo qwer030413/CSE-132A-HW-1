@@ -1,0 +1,29 @@
+total :-
+\rename_{borrowedAmount}
+\project_{total}
+(
+    \rename_{name, total}
+    \aggr_{name : sum(amount)}
+    (
+        \select_{name = 'John Smith'}
+        (
+            (customer \join_{name = cname} borrower)
+            \join_{lno = no} loan
+        )
+    )
+);
+
+zeros :-
+\rename_{borrowedAmount}
+\project_{zero}
+(
+    \rename_{name, zero}
+    (
+        \project_{name, 0}
+        (
+            \select_{name = 'John Smith'} customer
+        )
+    )
+);
+
+total \union (zeros \diff total);

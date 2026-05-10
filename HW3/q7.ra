@@ -1,0 +1,13 @@
+temp :-
+\project_{no}
+(
+    \select_{amount < amount2}
+    (
+        loan \cross \rename_{no2, type2, minCredit2, amount2} loan
+    )
+);
+
+\rename_{loanNo}
+(
+    \project_{no} loan \diff temp
+);

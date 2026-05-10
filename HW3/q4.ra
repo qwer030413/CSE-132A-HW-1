@@ -1,0 +1,10 @@
+\rename_{name1, name2}
+\project_{cname1, cname2}
+(
+    \select_{lno1 = lno2 and cname1 < cname2}
+    (
+        \rename_{cname1, lno1, due1} borrower
+        \cross
+        \rename_{cname2, lno2, due2} borrower
+    )
+);
