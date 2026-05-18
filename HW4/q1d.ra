@@ -1,0 +1,36 @@
+all :-
+\rename_{totalTypes} (
+    \aggr_{count(type)} (
+        \project_{type} loan
+    )
+);
+
+
+//disinct customer and type pair
+customerTypes :-
+\rename_{name, type} (
+    \project_{customer.name, loan.type} (
+        (
+            customer
+            \join_{customer.name = borrower.cname} borrower
+        )
+        \join_{borrower.lno = loan.no} loan
+    )
+);
+
+
+//counts per type
+
+customerTypeCounts :-
+\rename_{name, typeCnt} (
+    \aggr_{name: count(type)} customerTypes
+);
+
+
+res :-
+\project_{name} (
+    \select_{typeCnt = totalTypes} (
+        customerTypeCounts \cross all
+    )
+);
+res;

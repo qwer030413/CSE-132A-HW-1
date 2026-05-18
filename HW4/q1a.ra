@@ -1,0 +1,12 @@
+\project_{customer.name, loan.no}
+(
+    \select_{customer.credit < loan.minCredit}
+    (
+        (
+            customer
+            \join_{customer.name = borrower.cname} borrower
+        )
+        \join_{borrower.lno = loan.no} loan
+    )
+)
+;

@@ -1,0 +1,25 @@
+temp :-
+\rename_{type, cnt} (
+    \aggr_{loan.type: count(borrower.cname)} (
+        (
+            borrower
+            \join_{borrower.lno = loan.no} loan
+        )
+    )
+);
+
+minCnt :-
+\rename_{minCnt} (
+    \aggr_{min(cnt)} temp
+);
+
+res :-
+\rename_{loanType}(
+    \project_{type}(
+        \select_{temp.cnt = minCnt}(
+            temp \cross minCnt
+        )
+    )
+);
+
+res;

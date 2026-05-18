@@ -1,0 +1,27 @@
+// ok so we first count loans per customer
+loanCounts :-
+\rename_{cname, loanCount} \aggr_{cname : COUNT(lno)} borrower;
+
+// customer with loans
+customersWithLoans :-
+customer \join_{name = cname} loanCounts;
+
+// project to (name, loanCount)
+customersWithLoansProjected :-
+\project_{name, loanCount} customersWithLoans;
+
+// all customers
+allCustomers :-
+\project_{name} customer;
+
+// get diff so that we get the zero loan ones, left join
+zeroLoanCustomers :-
+allCustomers \diff \project_{name} customersWithLoansProjected;
+
+// add loanCount = 0 for zero-loan customers
+zeroLoanTuples :-
+\project_{name, 0} zeroLoanCustomers;
+
+// combine all customers
+result :-
+customersWithLoansProjected \union zeroLoanTuples;
