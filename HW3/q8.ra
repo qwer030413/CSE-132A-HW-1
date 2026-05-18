@@ -1,3 +1,17 @@
+john :-
+\project_{name}
+(
+    \select_{name = 'John Smith'} customer
+);
+
+
+
+john_borrowed :-
+\project_{name}
+(
+    john \join_{name = cname} borrower
+);
+
 total :-
 \rename_{borrowedAmount}
 \project_{total}
@@ -5,25 +19,16 @@ total :-
     \rename_{name, total}
     \aggr_{name : sum(amount)}
     (
-        \select_{name = 'John Smith'}
-        (
-            (customer \join_{name = cname} borrower)
-            \join_{lno = no} loan
-        )
+        (john \join_{name = cname} borrower)
+        \join_{lno = no} loan
     )
 );
 
-zeros :-
+zero :-
 \rename_{borrowedAmount}
-\project_{zero}
+\project_{0}
 (
-    \rename_{name, zero}
-    (
-        \project_{name, 0}
-        (
-            \select_{name = 'John Smith'} customer
-        )
-    )
+    john \diff john_borrowed
 );
 
-total \union (zeros \diff total);
+total \union zero;
