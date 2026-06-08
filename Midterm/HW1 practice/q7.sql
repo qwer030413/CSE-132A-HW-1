@@ -1,2 +1,2 @@
-SELECT l.no AS loanNo FROM loan l
-WHERE l.amount = (SELECT MAX(amount) FROM loan)
+select l.no as loanNo from loan l
+where l.amount = (select max(amount) from loan)

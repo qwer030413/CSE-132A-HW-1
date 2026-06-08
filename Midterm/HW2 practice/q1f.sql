@@ -8,25 +8,21 @@
 -- choose the tuple that is lexicographically smaller 
 -- (e.g. “(Jane,John)” but not “(John,Jane)”). Do not list customers with themselves.
 
-SELECT c1.name AS name1, c2.name AS name2
-FROM customer c1 JOIN customer c2 ON c1.name < c2.name
 
---see if there is a loan taken by c1 but not by c2
-WHERE NOT EXISTS(
-    SELECT b1.lno FROM borrower b1
-    WHERE b1.cname = c1.name
-    AND NOT EXISTS(
-        SELECT b2.lno FROM borrower b2
-        WHERE b2.cname = c2.name
-        AND b1.lno = b2.lno
+select c1.name AS name1, c2.name as name2
+FROM customer c1 JOIN customer c2 ON c1.name < c2.name
+-- for c1, look at c1s loans and iterate through c2 loans and see if there is a dne
+-- if dne, false, but if it all passes, then true
+where not exists(
+    select b1.lno from borrower b1
+    where b1.cname = c1.name
+    and not exists(
+        select b2.cname, b2.lno where b2.cname = c2.name and b2.lno = b1.lno
     )
 )
-
--- opposite, c2 but not c1
 AND NOT EXISTS(
-    SELECT b2.lno FROM borrower b2
-    WHERE b2.cname = c2.name
-    AND NOT EXISTS(
-        SELECT b1.cname, b1.lno FROM borrower b1 WHERE b1.cname = c1.name AND b1.lno = b2.lno
-    )
+    SELECT b2.lno FROM borrower b2 WHERE b2.cname = c2.name
+        AND NOT EXISTS(
+            SELECT b1.cname, b1.lno FROM borrower b1 WHERE b1.cname = c1.name AND b1.lno = b2.lno
+        )
 )

@@ -1,10 +1,10 @@
 -- write on cheat sheet
 -- List the loan type(s) with the smallest number of borrowers.
 -- The output schema should be (loanType).
-WITH temp AS(
-    SELECT l.type, COUNT(b.cname) AS cnt    
-    FROM loan l LEFT JOIN borrower b ON l.no = b.lno
-    GROUP BY l.type
+WITH temp as(
+    select l.type, count(b.cname) as cnt
+    from loan l left join borrower b on l.no = b.lno
+    group by l.type
 )
-SELECT DISTINCT type AS loanType
-FROM temp WHERE cnt = (SELECT MIN(cnt) FROM temp)
+select distinct type as loanType
+from temp where cnt = (SELECT MIN(cnt) FROM temp)

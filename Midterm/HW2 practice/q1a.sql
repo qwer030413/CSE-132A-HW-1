@@ -1,4 +1,3 @@
-SELECT c.name, l.no FROM customer c
-JOIN borrower b ON b.cname = c.name
-JOIN loan l ON l.no = b.lno
-WHERE c.credit < l.minCredit
+select b.cname, l.no from loan l join borrower b on b.lno = l.no
+join customer c on c.name = b.cname
+where c.credit < l.minCredit

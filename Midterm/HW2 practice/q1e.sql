@@ -1,8 +1,6 @@
 -- get average of all 
 -- ave num of borrowers for this specific type
--- SELECT l.no FROM loan l
--- JOIN borrower b ON b.lno = l.no
--- GROUP BY l.no HAVING COUNT(b.cname) > AVG
+
 
 -- List the loans L that have a strictly greater number of borrowers 
 -- than the average number of borrowers over all loans of L's type.
@@ -10,15 +8,15 @@
 -- cheat sheet
 
 -- counts borrowers for each individual loan.
-WITH loanCount AS(
-    SELECT l.no, l.type, count(b.name) AS cnt FROM loan l
-    LEFT JOIN borrower b ON l.no = b.lno GROUP BY l.no, l.type
-),
--- computes the average borrower count per loan type.
-avearge AS(
-    SELECT type, AVG(cnt) AS aver FROM loanCount GROUP BY type
+-- for each loan there is this many borrowers
+with temp as(
+    select l.no, l.type, count(b.cname) as cnt from loan l
+    left join borrower b on b.lno = l.no
+    group by l.no, l.type
 )
-SELECT lc.no
-FROM loanCount lc
-JOIN avearge a ON lc.type = a.type
-WHERE lc.cnt > a.aver;
+average as(
+    select t.type, avg(cnt) as aver from temp t group by t.type
+)
+select t.no from temp 
+join average a on a.type = t.type
+where t.cnt > a.aver

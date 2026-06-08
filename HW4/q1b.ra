@@ -18,10 +18,22 @@ allCustomers :-
 zeroLoanCustomers :-
 allCustomers \diff \project_{name} customersWithLoansProjected;
 
-// add loanCount = 0 for zero-loan customers
+
+
+zeroCount :-
+\rename_{loanCount} (
+    \aggr_{count(name)} (
+        \select_{name <> name} customer
+    )
+);
+
+// left join is so hard
+
 zeroLoanTuples :-
-\project_{name, 0} zeroLoanCustomers;
+zeroLoanCustomers \cross zeroCount;
 
 // combine all customers
 result :-
 customersWithLoansProjected \union zeroLoanTuples;
+
+result;

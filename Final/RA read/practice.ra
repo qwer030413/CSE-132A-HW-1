@@ -1,0 +1,124 @@
+Student(sid, name, major)
+Course(cid, title, dept)
+Enroll(sid, cid, quarter)
+Required(major, cid)
+
+
+//1
+π name (
+  σ major = 'CS' (Student)
+)
+
+select name from student where name is CS
+
+
+π name, title (
+  (Student ⋈ Student.sid = Enroll.sid Enroll)
+  ⋈ Enroll.cid = Course.cid Course
+)
+
+get the name and title of each student and the course that it is enrolled in
+
+
+
+π name, title (
+  (σ major = 'CS' (Student) ⋈ Student.sid = Enroll.sid Enroll)
+  ⋈ Enroll.cid = Course.cid
+  (σ dept = 'CSE' (Course))
+)
+gets the name, course title of students that are CS majors and enrolled in classes that are in CSE department
+
+
+π sid (Student)
+−
+π sid (Enroll)
+
+get all students that are not enrolled in any
+
+
+
+π sid, name (Student)
+−
+π Student.sid, name (
+  Student ⋈ Student.sid = Enroll.sid Enroll
+)
+get all sid, names of students who never enrolled in any course
+
+
+
+π sid (σ major = 'CS' (Student))
+∪
+π sid (σ major = 'Math' (Student))
+
+get all students who are cs majors or math majors
+
+
+π name, title (
+  Student × Course
+)
+returns every possible combination of student names and course titles
+
+
+Student ⋈ Student.sid = Enroll.sid Enroll
+σ Student.sid = Enroll.sid (Student × Enroll)
+
+they are the same!
+First form: explicit join (preferred, cleaner, more efficient)
+Second form: create all pairs first, then filter (conceptual definition of join)
+
+
+Student ⋈ Enroll
+What condition is implicitly used in this natural join?
+they see equality of attrs with same name: student.sid = enroll.sid
+
+
+π sid (Student)
+−
+ρ sid (π student_id (OldEnroll))
+Why is the rename needed?
+it is selecting all sid from student and excepting using old enroll
+we rename to match sid to student_id in OldEnroll
+
+
+Sailor(sname, rating)
+Boat(bname, rating)
+Reservation(sname, bname, day)
+Weekday(day)
+
+π Reservation.bname (
+  (Reservation ⋈ Reservation.sname = Sailor.sname Sailor)
+  ⋈ Sailor.rating >= Boat.rating ∧ Reservation.bname = Boat.bname Boat
+)
+get all boats that are reserved by atleast one sailor who are qualified
+
+π Reservation.sname, Reservation.bname, day (
+  (Reservation ⋈ Reservation.sname = Sailor.sname Sailor)
+  ⋈ Reservation.bname = Boat.bname ∧ Sailor.rating < Boat.rating Boat
+)
+get sailors name and boat name where the sailor cant sail the boat
+
+
+Wong-Youssefi / Simple RA Plan Writing
+
+SELECT s.name, c.title
+FROM Student s, Enroll e, Course c
+WHERE s.sid = e.sid
+  AND e.cid = c.cid
+  AND s.major = 'CS'
+  AND c.dept = 'CSE';
+
+optimized RA:
+  π s.name, c.title
+(
+  (σ major = 'CS' (Student))
+  ⋈ Student.sid = Enroll.sid
+  (
+    Enroll
+    ⋈ Enroll.cid = Course.cid
+    (σ dept = 'CSE' (Course))
+  )
+)
+Filter Student early (major = CS)
+Filter Course early (dept = CSE)
+Join smaller relations first
+

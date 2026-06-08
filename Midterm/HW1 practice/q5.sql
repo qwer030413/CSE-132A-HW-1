@@ -1,2 +1,4 @@
-SELECT b.lno AS loanNo FROM borrower b
-GROUP BY b.lno HAVING COUNT(DISTINCT b.cname) >= 2
+SELECT l.no from loan l
+join borrower b on b.lno = l.no
+group by l.no
+having count(distinct b.cname) >= 2

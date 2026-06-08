@@ -1,0 +1,57 @@
+c1 :-
+\rename_{c1: name, credit} customer;
+
+c2 :-
+\rename_{c2: name, credit} customer;
+
+// make customer pairs where name1 is < name2
+pairs :-
+\rename_{name1, name2} (
+    \project_{c1.name, c2.name} (
+        \select_{c1.name < c2.name} (
+            c1 \cross c2
+        )
+    )
+);
+
+
+b1 :-
+\rename_{b1: cname, lno, due} borrower;
+
+b2 :-
+\rename_{b2: cname, lno, due} borrower;
+
+
+c1Loans :-
+\rename_{name1, name2, lno} (
+    \project_{name1, name2, b1.lno} (
+        pairs
+        \join_{name1 = b1.cname} b1
+    )
+);
+
+c2Loans :-
+\rename_{name1, name2, lno} (
+    \project_{name1, name2, b2.lno} (
+        pairs
+        \join_{name2 = b2.cname} b2
+    )
+);
+
+
+// bad pairs
+bad1 :-
+\project_{name1, name2} (
+    c1Loans \diff c2Loans
+);
+bad2 :-
+\project_{name1, name2} (
+    c2Loans \diff c1Loans
+);
+
+res :-
+pairs \diff (
+    bad1 \union bad2
+);
+
+res;

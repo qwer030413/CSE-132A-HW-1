@@ -1,0 +1,69 @@
+loanCountNonZero :-
+\rename_{no, type, cnt} (
+    \aggr_{loan.no, loan.type: count(borrower.cname)} (
+            borrower
+            \join_{borrower.lno = loan.no} loan
+    )
+);
+
+allLoans :-
+\rename_{no, type} (
+    \project_{loan.no, loan.type} loan
+);
+
+
+
+loansWithBorrowers :-
+\project_{no, type} loanCountNonZero;
+
+
+zeroBorrowerLoans :-
+allLoans \diff loansWithBorrowers;
+
+zeroCount :-
+\rename_{cnt} (
+    \aggr_{count(no)} (
+        \select_{no <> no} loan
+    )
+);
+
+
+loanCountZero :-
+zeroBorrowerLoans \cross zeroCount;
+
+
+loanCount :-
+loanCountNonZero \union loanCountZero;
+
+
+
+
+
+
+
+
+
+
+
+average :-
+\rename_{type, aver} (
+    \aggr_{loanCount.type: avg(loanCount.cnt)} (
+        (
+            loanCount
+        )
+    )
+);
+
+res :-
+\project_{loanCount.no}(
+
+    \select_{loanCount.cnt > average.aver}
+    (
+        (
+            loanCount
+            \join_{loanCount.type = average.type} average
+        )
+    )
+);
+
+res;

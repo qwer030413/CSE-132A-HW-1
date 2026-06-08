@@ -8,3 +8,6 @@ DELETE FROM borrower WHERE lno IN(SELECT no from loan where type = 'jumbo mortga
 DELETE FROM loan WHERE type = 'jumbo mortgage';
 
 
+-- it should be borrower, customer and then loan LOL
+
+

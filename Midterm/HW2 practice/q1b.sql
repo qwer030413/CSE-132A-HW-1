@@ -1,3 +1,3 @@
-SELECT c.name, COALSCE(COUNT(l.no), 0) AS loanCount FROM customer c
-JOIN borrower b ON b.cname = c.name
-GROUP BY c.name
+select c.name, coalesce(count(b.lno), 0)
+from customer c left join borrower b on c.name = b.cname
+group by c.name

@@ -3,8 +3,16 @@
 
 -- there does not exist a loan tyoe that the customer did not take a loan in
 -- cheatsheet
-SELECT c.name FROM customer c  
-JOIN borrower b on c.name = b.cname JOIN loan l on l.no = b.lno
-GROUP BY c.name HAVING COUNT(DISTINCT l.type) = (
-    SELECT COUNT(DISTINCT type) FROM loan
+-- not exists means it has to be empty
+-- 
+
+select c.name from customer c
+where not exists(
+    select l.type from loan l
+    where not exists(
+        select * from borrower b
+        join loan l2 on b.lno = l2.no
+        where b.cname = c.cname
+        and l2.type = l.type
+    )
 )

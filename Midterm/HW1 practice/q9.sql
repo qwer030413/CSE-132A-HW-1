@@ -1,8 +1,5 @@
-SELECT l.no AS loanNo FROM loan l 
-JOIN borrower b ON b.lno = l.no
-WHERE b.cname = 'John Smith'
-AND l.minCredit = (
-    SELECT MAX(l2.minCredit) FROM loan l2
-    JOIN borrower b2 ON b2.lno = l2.no
-    WHERE b2.cname = 'John Smith'
-)
+select l.no from loan l
+join borrower b on b.lno = l.no
+where b.cname = 'john smih' and
+l.mincredit = (select max(l1.mincredit) from loan l1 join borrower b1 on b1.lno = l1.no
+where b.cname = 'john smith')
